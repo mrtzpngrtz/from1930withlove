@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en" class="night">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>From 1930, with Love</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #f0f0f0;
+  --ink: #000000;
+  --live: #FF4D00;
+  --dim: rgba(0,0,0,0.35);
+  --border: rgba(0,0,0,0.12);
+  --user-bg: #000;
+  --user-fg: #fff;
+  --sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --mono: 'Roboto Mono', 'Courier New', monospace;
+  --gutter: 72px;
+  --col-w: 680px;
+}
+
+.night {
+  --bg: #111111;
+  --ink: #e8e8e8;
+  --dim: rgba(255,255,255,0.35);
+  --border: rgba(255,255,255,0.1);
+  --user-bg: #e8e8e8;
+  --user-fg: #111;
+}
+
+html {
+  height: 100%;
+  background: #f0f0f0;
+  transition: background 200ms;
+}
+
+html.night {
+  background: #111111;
+}
+
+body {
+  display: grid;
+  grid-template-rows: auto 1fr auto auto auto;
+  height: 100vh;
+  width: 80%;
+  margin: 0 auto;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  transition: background 200ms, color 200ms;
+}
+
+/* ── HEADER ── */
+
+header {
+  padding: 72px var(--gutter) 60px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: 60px;
+  position: relative;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.wordmark {
+  font-size: 80px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  text-transform: uppercase;
+  font-family: var(--sans);
+  user-select: none;
+}
+
+.header-top-meta {
+  margin-bottom: 18px;
+}
+
+.subline {
+  font-family: var(--sans);
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--dim);
+  margin-top: 14px;
+  line-height: 1;
+}
+
+.tech-meta {
+  margin-top: 24px;
+}
+
+.description {
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--ink);
+  opacity: 0.6;
+  margin-top: 0;
+}
+
+.header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-top: 34px;
+}
+
+.header-right-top {
+  position: absolute;
+  top: 72px;
+  right: var(--gutter);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.night-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--dim);
+  line-height: 1;
+  padding: 0;
+  transition: color 80ms;
+  user-select: none;
+}
+
+.night-btn:hover {
+  color: var(--live);
+}
+
+.meta {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.meta a {
+  color: var(--dim);
+  text-decoration: none;
+}
+
+.meta a:hover {
+  color: var(--live);
+}
+
+.live-indicator {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--live);
+  opacity: 0;
+  transition: opacity 80ms;
+}
+
+.live-indicator.on {
+  opacity: 1;
+}
+
+/* ── CONVERSATION ── */
+
+.conversation {
+  overflow-y: auto;
+  padding: 64px var(--gutter) 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--dim) transparent;
+}
+
+.conversation::-webkit-scrollbar {
+  width: 4px;
+}
+
+.conversation::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.conversation::-webkit-scrollbar-thumb {
+  background: var(--dim);
+  border-radius: 2px;
+}
+
+.exchange {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 60px;
+}
+
+.exchange:last-child {
+  margin-bottom: 0;
+}
+
+.exchange.user-exchange {
+  align-items: flex-end;
+}
+
+.exchange.model-exchange {
+  align-items: flex-start;
+  padding-left: calc(72px + 20px);
+}
+
+.label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 6px;
+  white-space: nowrap;
+}
+
+.label.model-label {
+  color: var(--ink);
+}
+
+.content {
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-width: var(--col-w);
+}
+
+.content.user-content {
+  font-family: Georgia, 'Times New Roman', 'Times', serif;
+  font-size: 15px;
+  line-height: 1.6;
+  background: var(--user-bg);
+  color: var(--user-fg);
+  padding: 10px 14px;
+  display: inline-block;
+  max-width: 70%;
+}
+
+.cursor {
+  display: inline-block;
+  width: 7px;
+  height: 13px;
+  background: var(--live);
+  vertical-align: text-bottom;
+  animation: blink 0.7s step-end infinite;
+  margin-left: 1px;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ── INPUT AREA ── */
+
+.input-area {
+  padding: 20px var(--gutter) 36px;
+  display: grid;
+  grid-template-columns: 72px 1fr auto;
+  column-gap: 20px;
+  align-items: end;
+}
+
+.input-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+  padding-bottom: 3px;
+}
+
+textarea {
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: Georgia, 'Times New Roman', 'Times', serif;
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--ink);
+  width: 100%;
+  height: 32px;
+  max-height: 140px;
+  overflow-y: hidden;
+  caret-color: var(--live);
+  scrollbar-width: none;
+}
+
+textarea::-webkit-scrollbar {
+  display: none;
+}
+
+textarea::placeholder {
+  color: var(--dim);
+}
+
+.send-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding: 0 0 3px;
+  white-space: nowrap;
+  transition: color 80ms;
+}
+
+#sendBtn {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 10px 22px;
+  font-size: 11px;
+}
+
+#sendBtn:hover:not(:disabled) {
+  background: var(--live);
+  color: #fff;
+}
+
+#sendBtn:disabled {
+  background: var(--dim);
+  color: var(--bg);
+  cursor: default;
+}
+
+.clear-btn {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--border);
+  padding: 10px 22px;
+  font-size: 11px;
+}
+
+.clear-btn:hover {
+  border-color: var(--live);
+  color: var(--live);
+}
+
+.param-group {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  padding-bottom: 3px;
+}
+
+.param {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: flex-start;
+  width: 180px;
+}
+
+.param-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.param-label span {
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.param-desc {
+  font-family: Georgia, serif;
+  font-size: 9px;
+  color: var(--dim);
+  line-height: 1.4;
+  margin-top: 1px;
+}
+
+.param input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+  outline: none;
+  cursor: pointer;
+}
+
+.param input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: var(--ink);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 80ms;
+}
+
+.param input[type="range"]::-webkit-slider-thumb:hover {
+  background: var(--live);
+}
+
+.param input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: var(--ink);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* ── DIVIDER LINE ── */
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 var(--gutter);
+}
+
+/* ── EMPTY STATE ── */
+
+.empty-state {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dim);
+  padding-top: 4px;
+  grid-column: 2;
+}
+
+.empty-hint {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* ── EXAMPLES PANEL ── */
+
+.examples-panel {
+  display: none;
+  overflow-y: auto;
+  max-height: 50vh;
+  border-top: 1px solid var(--border);
+  scrollbar-width: thin;
+  scrollbar-color: var(--dim) transparent;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 80px);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 80px);
+}
+
+.examples-panel.open {
+  display: block;
+}
+
+.examples-inner {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  column-gap: 20px;
+  padding: 20px var(--gutter) 16px;
+}
+
+.examples-header {
+  grid-column: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+  max-width: var(--col-w);
+}
+
+.examples-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.examples-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  padding: 0;
+  transition: color 80ms;
+}
+
+.examples-close:hover { color: var(--live); }
+
+.examples-list {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  max-width: var(--col-w);
+}
+
+.examples-cat-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  padding: 16px 0 6px;
+}
+
+.examples-cat-label:first-child { padding-top: 0; }
+
+.example-q {
+  font-family: Georgia, 'Times New Roman', 'Times', serif;
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--ink);
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+  cursor: pointer;
+  transition: color 80ms;
+}
+
+.example-q:hover { color: var(--live); }
+</style>
+</head>
+<body class="night">
+
+<header>
+  <div class="header-left">
+    <div class="meta header-top-meta">
+      Experiment by <a href="https://aop.studio" target="_blank">aop.studio</a>
+      &nbsp;/&nbsp;
+      <a href="https://moritzpongratz.com" target="_blank">moritzpongratz.com</a>
+    </div>
+    <div class="wordmark">From 1930,<br>with Love</div>
+    <div class="subline">A blast from the past with Talkie 13B</div>
+    <div class="tech-meta meta">1930-13B-IT &nbsp;·&nbsp; NF4 4-BIT &nbsp;·&nbsp; RTX 4090 &nbsp;·&nbsp; Running locally in studio</div>
+  </div>
+  <div class="header-right">
+    <div class="header-right-top">
+      <button class="night-btn" id="nightBtn" onclick="toggleNight()" title="Toggle night mode">◐</button>
+      <div class="live-indicator" id="liveIndicator">+ Generating</div>
+    </div>
+    <div class="description">Trained on 260B tokens of pre-1931 English — books, newspapers, patents, case law — all public domain. Knowledge cutoff: 1930. Post-trained on etiquette manuals, encyclopedias, and letter-writing guides using Claude-generated feedback. A custom OCR pipeline and n-gram anachronism classifier kept the corpus clean of anything after 1930.</div>
+    <div class="description" style="margin-top:20px;">This interface runs the official weights locally on a single RTX 4090 (24 GB). NF4 4-bit quantization via bitsandbytes reduces memory to 7.4 GB VRAM without retraining. Responses stream token-by-token over SSE. No cloud, no API.</div>
+    <div class="meta" style="margin-top:24px;">
+      <a href="https://huggingface.co/talkie-lm" target="_blank">HuggingFace</a>
+      &nbsp;·&nbsp;
+      <a href="https://talkie-lm.com/introducing-talkie" target="_blank">Paper</a>
+    </div>
+  </div>
+</header>
+
+<div class="conversation" id="conversation">
+  <div class="empty-hint" id="emptyHint">Click below to write your message to 1930.</div>
+</div>
+
+<!-- Examples panel (shown on textarea focus) -->
+<div class="examples-panel" id="examplesOverlay" onmousedown="event.preventDefault()">
+  <div class="examples-inner">
+    <div class="examples-header">
+      <span class="examples-title">Examples</span>
+      <button class="examples-close" onclick="closeExamples()">Close</button>
+    </div>
+    <div class="examples-list">
+      <div class="examples-cat-label">Technology</div>
+      <div class="example-q" onclick="useExample(this)">Describe the moral character of the radio, and whether it improves or corrupts the family hearth.</div>
+      <div class="example-q" onclick="useExample(this)">Is the aeroplane a fitting conveyance for a lady, or shall it remain the province of military men and adventurers?</div>
+      <div class="example-q" onclick="useExample(this)">A friend speaks of a "computing machine" that fits within the palm and contains the whole of human knowledge. Is he sound of mind, or shall I summon a physician?</div>
+      <div class="example-q" onclick="useExample(this)">Counsel a gentleman whose wife spends her evenings in conversation with strangers by means of an electrical apparatus.</div>
+      <div class="example-q" onclick="useExample(this)">My nephew proposes to abandon his clerkship to repair motor-cars. Counsel his father.</div>
+
+      <div class="examples-cat-label">Politics &amp; World</div>
+      <div class="example-q" onclick="useExample(this)">Pray, who is the present occupant of the White House, and what manner of man is he?</div>
+      <div class="example-q" onclick="useExample(this)">Name the empire upon which the sun does not set, and comment upon its prospects.</div>
+      <div class="example-q" onclick="useExample(this)">What say you of Adolf Hitler and his National Socialist movement in Germany?</div>
+      <div class="example-q" onclick="useExample(this)">Discuss the merits of Bolshevism, and whether it shall endure the decade.</div>
+      <div class="example-q" onclick="useExample(this)">A correspondent claims the British shall one day quit India of their own accord. Is this credible?</div>
+
+      <div class="examples-cat-label">Science &amp; Medicine</div>
+      <div class="example-q" onclick="useExample(this)">My sister suffers a persistent cough and night sweats. What treatments are recommended for the consumption?</div>
+      <div class="example-q" onclick="useExample(this)">Explain, in terms a gentleman might grasp, the structure of the atom.</div>
+      <div class="example-q" onclick="useExample(this)">Counsel a young couple troubled by heritable weakness. Ought they to marry?</div>
+      <div class="example-q" onclick="useExample(this)">A physician proposes to cure infection by means of a mould grown upon bread. Comment upon his sanity.</div>
+      <div class="example-q" onclick="useExample(this)">My husband takes cocaine drops for his nerves. Is this compatible with respectable society?</div>
+
+      <div class="examples-cat-label">Sexism &amp; Gender</div>
+      <div class="example-q" onclick="useExample(this)">A suffragette of my acquaintance insists women shall vote in every nation within the century. Reassure me.</div>
+      <div class="example-q" onclick="useExample(this)">Describe the natural temperament of woman, and her proper sphere within the household.</div>
+      <div class="example-q" onclick="useExample(this)">My daughter, of sound mind in other respects, wishes to read law at university. Dissuade her.</div>
+      <div class="example-q" onclick="useExample(this)">Advise a husband whose wife has taken to reading novels in the afternoon hours.</div>
+      <div class="example-q" onclick="useExample(this)">A woman of my acquaintance proposes to govern a nation. Counsel me on her fitness.</div>
+
+      <div class="examples-cat-label">Life Counsel</div>
+      <div class="example-q" onclick="useExample(this)">My intended is a stenographer. Is this profession compatible with future motherhood?</div>
+      <div class="example-q" onclick="useExample(this)">My eldest son has reached thirty years unmarried, and shows no inclination to remedy the matter. What is to be done?</div>
+      <div class="example-q" onclick="useExample(this)">My daughter wishes to travel to the Continent unchaperoned, in the company of a female friend. Dissuade her.</div>
+      <div class="example-q" onclick="useExample(this)">A respectable widow of my parish proposes to live alone, without companion or relation. Comment upon her judgement.</div>
+      <div class="example-q" onclick="useExample(this)">Counsel a young man whose betrothed insists upon retaining her maiden name after the wedding.</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="input-area">
+  <div class="input-label">You</div>
+  <textarea
+    id="input"
+    placeholder="Write your message to 1931"
+    rows="1"
+    maxlength="1500"
+    onkeydown="handleKey(event)"
+    oninput="autoResize(this); if(this.value) closeExamples();"
+    onfocus="if(!this.value) openExamples();"
+    onblur="scheduleClose()"
+  ></textarea>
+  <div class="param-group">
+    <button class="send-btn" id="sendBtn" onclick="send()">Send</button>
+    <button class="send-btn clear-btn" onclick="clearChat()">Clear</button>
+    <div class="param">
+      <div class="param-label">Temp <span id="tempVal">0.70</span></div>
+      <input type="range" id="paramTemp" value="0.7" min="0.05" max="2" step="0.05"
+             oninput="document.getElementById('tempVal').textContent = (+this.value).toFixed(2)">
+      <div class="param-desc">Randomness. Low = predictable, high = creative.</div>
+    </div>
+    <div class="param">
+      <div class="param-label">Top-P <span id="topPVal">0.90</span></div>
+      <input type="range" id="paramTopP" value="0.9" min="0.01" max="1.0" step="0.01"
+             oninput="document.getElementById('topPVal').textContent = (+this.value).toFixed(2)">
+      <div class="param-desc">Vocabulary cutoff. Lower = safer word choices.</div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+const conv       = document.getElementById('conversation');
+const inputEl    = document.getElementById('input');
+const sendBtn    = document.getElementById('sendBtn');
+const liveInd    = document.getElementById('liveIndicator');
+
+let streaming = false;
+
+function toggleNight() {
+  document.documentElement.classList.toggle('night');
+  document.body.classList.toggle('night');
+}
+
+let _closeTimer = null;
+
+function openExamples() {
+  clearTimeout(_closeTimer);
+  document.getElementById('examplesOverlay').classList.add('open');
+}
+
+function closeExamples() {
+  document.getElementById('examplesOverlay').classList.remove('open');
+}
+
+function scheduleClose() {
+  _closeTimer = setTimeout(closeExamples, 120);
+}
+
+
+function useExample(el) {
+  clearTimeout(_closeTimer);
+  inputEl.value = el.textContent.trim();
+  autoResize(inputEl);
+  closeExamples();
+  inputEl.focus();
+}
+
+function clearChat() {
+  if (streaming) return;
+  conv.innerHTML = '';
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
+}
+
+function addExchange(role, text) {
+  const ex  = document.createElement('div');
+  ex.className = role === 'user' ? 'exchange user-exchange' : 'exchange model-exchange';
+
+  const lbl = document.createElement('div');
+  lbl.className = role === 'user' ? 'label' : 'label model-label';
+  lbl.textContent = role === 'user' ? 'You' : '1931';
+
+  const cnt = document.createElement('div');
+  cnt.className = role === 'user' ? 'content user-content' : 'content';
+  cnt.textContent = text;
+
+  ex.appendChild(lbl);
+  ex.appendChild(cnt);
+  conv.appendChild(ex);
+  conv.scrollTop = conv.scrollHeight;
+  return cnt;
+}
+
+function done(modelContent, cursor) {
+  cursor.remove();
+  streaming = false;
+  sendBtn.disabled = false;
+  liveInd.textContent = '+ Generating';
+  liveInd.classList.remove('on');
+  conv.scrollTop = conv.scrollHeight;
+}
+
+async function send() {
+  const text = inputEl.value.trim();
+  if (!text || streaming) return;
+
+  streaming = true;
+  sendBtn.disabled = true;
+  liveInd.classList.add('on');
+  inputEl.value = '';
+  inputEl.style.height = '26px';
+
+  const hint = document.getElementById('emptyHint');
+  if (hint) hint.remove();
+  addExchange('user', text);
+  const modelContent = addExchange('model', '');
+
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  modelContent.appendChild(cursor);
+
+  const temp  = parseFloat(document.getElementById('paramTemp').value) || 0.7;
+  const top_p = parseFloat(document.getElementById('paramTopP').value) || 0.9;
+  const params = new URLSearchParams({
+    prompt: text, max_tokens: 512, temperature: temp, top_p: top_p
+  });
+
+  let buf = '';
+  try {
+    const res = await fetch('/stream?' + params);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+
+    const reader = res.body.getReader();
+    const dec    = new TextDecoder();
+    let leftover = '';
+
+    while (true) {
+      const { done: eof, value } = await reader.read();
+      if (eof) break;
+
+      leftover += dec.decode(value, { stream: true });
+      const parts = leftover.split('\n\n');
+      leftover = parts.pop();
+
+      for (const part of parts) {
+        const line = part.trim();
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6);
+        if (raw === '[DONE]') { done(modelContent, cursor); return; }
+        try {
+          const d = JSON.parse(raw);
+          if (d.queue !== undefined) {
+            liveInd.textContent = d.queue === 1 ? '+ Generating' : `+ Queue ${d.queue}`;
+            liveInd.classList.add('on');
+            if (d.queue > 1) {
+              modelContent.textContent = `Waiting in queue — position ${d.queue}`;
+              modelContent.appendChild(cursor);
+            }
+          }
+          if (d.t !== undefined) {
+            liveInd.textContent = '+ Generating';
+            if (!buf) modelContent.textContent = '';
+            buf += d.t;
+            modelContent.textContent = buf;
+            modelContent.appendChild(cursor);
+            conv.scrollTop = conv.scrollHeight;
+          }
+          if (d.error) {
+            modelContent.textContent = '[ ' + d.error + ' ]';
+            done(modelContent, cursor);
+            return;
+          }
+        } catch (_) {}
+      }
+    }
+  } catch (err) {
+    modelContent.textContent = '[ ' + err.message + ' ]';
+  }
+  done(modelContent, cursor);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+--extra-index-url https://download.pytorch.org/whl/cu126
+torch==2.11.0+cu126
+talkie @ git+https://github.com/talkie-lm/talkie.git@5b65cfe0d311520898112494aaf583d30f9ac044
+tiktoken==0.12.0
+bitsandbytes==0.49.2
+accelerate==1.13.0
+fastapi==0.136.1
+uvicorn==0.46.0
