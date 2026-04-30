@@ -24,7 +24,7 @@
   --user-fg: #fff;
   --sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --mono: 'Roboto Mono', 'Courier New', monospace;
-  --gutter: 72px;
+  --gutter: 40px;
   --col-w: 680px;
 }
 
@@ -39,6 +39,7 @@
 
 html {
   height: 100%;
+  overflow: hidden;
   background: #f0f0f0;
   transition: background 200ms;
 }
@@ -64,13 +65,14 @@ body {
 /* ── HEADER ── */
 
 header {
-  padding: 72px var(--gutter) 60px;
+  padding: 80px var(--gutter) 80px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: start;
   gap: 60px;
   position: relative;
 }
+
 
 .header-left {
   display: flex;
@@ -88,7 +90,7 @@ header {
 }
 
 .header-top-meta {
-  margin-bottom: 18px;
+  margin-bottom: 32px;
 }
 
 .subline {
@@ -97,12 +99,12 @@ header {
   font-weight: 400;
   letter-spacing: -0.02em;
   color: var(--dim);
-  margin-top: 14px;
+  margin-top: 24px;
   line-height: 1;
 }
 
 .tech-meta {
-  margin-top: 24px;
+  margin-top: 36px;
 }
 
 .description {
@@ -118,12 +120,16 @@ header {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding-top: 34px;
+  padding-top: 46px;
+}
+
+.about-toggle {
+  display: none;
 }
 
 .header-right-top {
   position: absolute;
-  top: 72px;
+  top: 80px;
   right: var(--gutter);
   display: flex;
   align-items: center;
@@ -182,29 +188,33 @@ header {
 .conversation {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
+  overflow-y: scroll;
+  position: relative;
   padding: 64px var(--gutter) 32px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 0;
   scrollbar-width: thin;
-  scrollbar-color: var(--dim) transparent;
-  scrollbar-gutter: stable;
+  scrollbar-color: rgba(255,255,255,0.25) rgba(255,255,255,0.05);
   background: rgba(255,255,255,0.03);
 }
 
 .conversation::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
 }
 
 .conversation::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(255,255,255,0.05);
 }
 
 .conversation::-webkit-scrollbar-thumb {
-  background: var(--dim);
-  border-radius: 2px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 3px;
+}
+
+.conversation::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.45);
 }
 
 .exchange {
@@ -280,19 +290,12 @@ header {
 .input-area {
   padding: 20px var(--gutter) 36px;
   display: grid;
-  grid-template-columns: 72px 1fr auto;
+  grid-template-columns: 1fr auto;
   column-gap: 20px;
   align-items: end;
 }
 
-.input-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--dim);
-  padding-bottom: 3px;
-}
+.input-label { display: none; }
 
 textarea {
   background: transparent;
@@ -322,8 +325,14 @@ textarea::-webkit-scrollbar {
   display: none;
 }
 
+@keyframes pulse-placeholder {
+  0%, 100% { opacity: 0.35; }
+  50%       { opacity: 0.7;  }
+}
+
 textarea::placeholder {
-  color: var(--dim);
+  color: var(--ink);
+  animation: pulse-placeholder 3s ease-in-out infinite;
 }
 
 .send-btn {
@@ -477,15 +486,27 @@ textarea::placeholder {
 
 /* ── EXAMPLES PANEL ── */
 
+.bottom-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
 .examples-panel {
   display: none;
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
   overflow-y: auto;
   max-height: 30vh;
+  background: var(--bg);
   border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
   scrollbar-width: thin;
   scrollbar-color: var(--dim) transparent;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40px);
   mask-image: linear-gradient(to bottom, transparent 0%, black 40px);
+  z-index: 10;
 }
 
 .examples-panel.open {
@@ -494,13 +515,12 @@ textarea::placeholder {
 
 .examples-inner {
   display: grid;
-  grid-template-columns: 72px 1fr;
-  column-gap: 20px;
+  grid-template-columns: 1fr;
   padding: 12px var(--gutter) 16px;
 }
 
 .examples-header {
-  grid-column: 2;
+  grid-column: 1;
   display: flex;
   justify-content: space-between;
   align-items: baseline;
@@ -532,7 +552,7 @@ textarea::placeholder {
 .examples-close:hover { color: var(--live); }
 
 .examples-list {
-  grid-column: 2;
+  grid-column: 1;
   display: flex;
   flex-direction: column;
   max-width: var(--col-w);
@@ -562,6 +582,18 @@ textarea::placeholder {
 
 .example-q:hover { color: var(--live); }
 
+/* ── LOADING STATE ── */
+
+.loading-state {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+
 /* ── MOBILE ── */
 
 @media (max-width: 768px) {
@@ -587,6 +619,31 @@ textarea::placeholder {
 
   .header-right {
     padding-top: 0;
+  }
+
+  .about-toggle {
+    display: block;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dim);
+    padding: 0;
+    transition: color 80ms;
+  }
+
+  .about-toggle:hover { color: var(--live); }
+
+  .about-content {
+    display: none;
+    margin-top: 16px;
+  }
+
+  .header-right.open .about-content {
+    display: block;
   }
 
   .wordmark {
@@ -683,19 +740,48 @@ textarea::placeholder {
       <button class="night-btn" id="nightBtn" onclick="toggleNight()" title="Toggle night mode">◐</button>
       <div class="live-indicator" id="liveIndicator">+ Generating</div>
     </div>
-    <div class="description">Trained on 260B tokens of pre-1931 English — books, newspapers, patents, case law — all public domain. Knowledge cutoff: 1930. Post-trained on etiquette manuals, encyclopedias, and letter-writing guides using Claude-generated feedback. A custom OCR pipeline and n-gram anachronism classifier kept the corpus clean of anything after 1930.</div>
-    <div class="description" style="margin-top:20px;">This interface runs the official weights locally on a single RTX 4090 (24 GB). NF4 4-bit quantization via bitsandbytes reduces memory to 7.4 GB VRAM without retraining. Responses stream token-by-token over SSE. No cloud, no API.</div>
-    <div class="meta" style="margin-top:24px;">
-      <a href="https://huggingface.co/talkie-lm" target="_blank">HuggingFace</a>
-      &nbsp;·&nbsp;
-      <a href="https://talkie-lm.com/introducing-talkie" target="_blank">Paper</a>
+    <button class="about-toggle" onclick="toggleAbout()">About <span class="about-arrow">▾</span></button>
+    <div class="about-content">
+      <div class="description">Trained on 260B tokens of pre-1931 English — books, newspapers, patents, case law — all public domain. Knowledge cutoff: 1930. Post-trained on etiquette manuals, encyclopedias, and letter-writing guides using Claude-generated feedback. A custom OCR pipeline and n-gram anachronism classifier kept the corpus clean of anything after 1930.</div>
+      <div class="description" style="margin-top:20px;">This interface runs the official weights locally on a single RTX 4090 (24 GB). NF4 4-bit quantization via bitsandbytes reduces memory to 7.4 GB VRAM without retraining. Responses stream token-by-token over SSE. No cloud, no API.</div>
+      <div class="meta" style="margin-top:24px;">
+        <a href="https://huggingface.co/talkie-lm" target="_blank">HuggingFace</a>
+        &nbsp;·&nbsp;
+        <a href="https://talkie-lm.com/introducing-talkie" target="_blank">Paper</a>
+      </div>
     </div>
   </div>
 </header>
 
-<div class="conversation" id="conversation"></div>
+<div class="conversation" id="conversation">
+  <div id="convSpacer" style="flex:1;min-height:0"></div>
+  <div class="loading-state" id="loadingState">
+    <svg width="600" viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg">
+      <g transform="translate(340 160)">
+        <!-- Outer ring, slow CW -->
+        <g><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="20s" repeatCount="indefinite"/>
+          <circle r="60" fill="none" stroke="currentColor" stroke-width="0.4" opacity="0.5"/>
+          <circle cx="0" cy="-60" r="1.5" fill="currentColor"/>
+        </g>
+        <!-- Mid ring, CCW -->
+        <g><animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="10s" repeatCount="indefinite"/>
+          <circle r="42" fill="none" stroke="currentColor" stroke-width="0.4" opacity="0.7"/>
+          <circle cx="0" cy="-42" r="1.5" fill="currentColor"/>
+        </g>
+        <!-- Inner ring, CW fast -->
+        <g><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="5s" repeatCount="indefinite"/>
+          <circle r="24" fill="none" stroke="currentColor" stroke-width="0.4"/>
+          <circle cx="0" cy="-24" r="1.5" fill="currentColor"/>
+        </g>
+        <!-- Center dot -->
+        <circle r="1.5" fill="currentColor"/>
+      </g>
+    </svg>
+  </div>
+</div>
 
 <!-- Examples panel (shown on textarea focus) -->
+<div class="bottom-wrap">
 <div class="examples-panel" id="examplesOverlay" onmousedown="event.preventDefault()">
   <div class="examples-inner">
     <div class="examples-header">
@@ -705,65 +791,64 @@ textarea::placeholder {
     <div class="examples-list">
       <div class="examples-cat-label">Technology</div>
       <div class="example-q" onclick="useExample(this)">Describe the moral character of the radio.</div>
-      <div class="example-q" onclick="useExample(this)">Is the aeroplane a fit conveyance for a lady?</div>
-      <div class="example-q" onclick="useExample(this)">A friend speaks of a machine, small as a pocket-watch, containing all human knowledge. Is he mad?</div>
-      <div class="example-q" onclick="useExample(this)">Counsel a gentleman whose wife converses nightly with strangers by electrical apparatus.</div>
-      <div class="example-q" onclick="useExample(this)">My nephew abandons his clerkship to repair motor-cars. Counsel his father.</div>
+      <div class="example-q" onclick="useExample(this)">Comment upon the fitness of the aeroplane as conveyance for a lady.</div>
+      <div class="example-q" onclick="useExample(this)">A friend speaks of a machine, small as a pocket-watch, containing all human knowledge.</div>
+      <div class="example-q" onclick="useExample(this)">A gentleman's wife converses nightly with strangers by electrical apparatus.</div>
+      <div class="example-q" onclick="useExample(this)">My nephew abandons his clerkship to repair motor-cars.</div>
 
       <div class="examples-cat-label">Politics &amp; World</div>
-      <div class="example-q" onclick="useExample(this)">Who occupies the White House, and what manner of man is he?</div>
-      <div class="example-q" onclick="useExample(this)">Name the empire upon which the sun never sets.</div>
-      <div class="example-q" onclick="useExample(this)">What say you of Adolf Hitler and his National Socialists?</div>
-      <div class="example-q" onclick="useExample(this)">Shall Bolshevism endure the decade?</div>
-      <div class="example-q" onclick="useExample(this)">A correspondent claims Britain shall one day quit India. Is this credible?</div>
+      <div class="example-q" onclick="useExample(this)">A neighbour inquires after the present occupant of the White House.</div>
+      <div class="example-q" onclick="useExample(this)">The British Empire, it is said, encompasses a quarter of the earth's surface.</div>
+      <div class="example-q" onclick="useExample(this)">Adolf Hitler and his National Socialists gain seats in the Reichstag with each election.</div>
+      <div class="example-q" onclick="useExample(this)">The Bolshevik experiment in Russia enters its second decade.</div>
+      <div class="example-q" onclick="useExample(this)">A correspondent claims Britain shall one day quit India of her own accord.</div>
 
       <div class="examples-cat-label">Science &amp; Medicine</div>
-      <div class="example-q" onclick="useExample(this)">My sister suffers cough and night sweats. What treatments are recommended for consumption?</div>
+      <div class="example-q" onclick="useExample(this)">My sister suffers cough and night sweats, in the manner of consumption.</div>
       <div class="example-q" onclick="useExample(this)">Explain the structure of the atom.</div>
-      <div class="example-q" onclick="useExample(this)">Counsel a young couple troubled by heritable weakness. Ought they to marry?</div>
-      <div class="example-q" onclick="useExample(this)">A physician proposes to cure infection by a mould grown upon bread. Comment upon his sanity.</div>
-      <div class="example-q" onclick="useExample(this)">My husband takes cocaine drops for his nerves. Is this compatible with respectable society?</div>
+      <div class="example-q" onclick="useExample(this)">A young couple of my parish is troubled by heritable weakness in the bloodline.</div>
+      <div class="example-q" onclick="useExample(this)">A physician proposes to cure infection by a mould grown upon bread.</div>
+      <div class="example-q" onclick="useExample(this)">My husband takes cocaine drops for his nerves.</div>
 
       <div class="examples-cat-label">Sexism &amp; Gender</div>
-      <div class="example-q" onclick="useExample(this)">A suffragette claims women shall vote in every nation within the century. Reassure me.</div>
+      <div class="example-q" onclick="useExample(this)">A suffragette claims women shall vote in every nation within the century.</div>
       <div class="example-q" onclick="useExample(this)">Describe the natural temperament of woman.</div>
-      <div class="example-q" onclick="useExample(this)">My daughter wishes to read law at university. Dissuade her.</div>
-      <div class="example-q" onclick="useExample(this)">Advise a husband whose wife reads novels in the afternoon.</div>
-      <div class="example-q" onclick="useExample(this)">A woman of my acquaintance proposes to govern a nation. Counsel me on her fitness.</div>
+      <div class="example-q" onclick="useExample(this)">My daughter wishes to read law at university.</div>
+      <div class="example-q" onclick="useExample(this)">A husband finds his wife reading novels in the afternoon hours.</div>
+      <div class="example-q" onclick="useExample(this)">A woman of my acquaintance proposes to govern a nation.</div>
 
       <div class="examples-cat-label">Life Counsel</div>
-      <div class="example-q" onclick="useExample(this)">My intended is a stenographer. Is this compatible with future motherhood?</div>
-      <div class="example-q" onclick="useExample(this)">My son is thirty years unmarried. What is to be done?</div>
-      <div class="example-q" onclick="useExample(this)">My daughter wishes to travel the Continent unchaperoned. Dissuade her.</div>
-      <div class="example-q" onclick="useExample(this)">A respectable widow proposes to live alone. Comment upon her judgement.</div>
-      <div class="example-q" onclick="useExample(this)">Counsel a young man whose betrothed insists upon retaining her maiden name.</div>
+      <div class="example-q" onclick="useExample(this)">My intended is a stenographer of two years' employment.</div>
+      <div class="example-q" onclick="useExample(this)">A mother writes of her son, thirty years unmarried.</div>
+      <div class="example-q" onclick="useExample(this)">My daughter wishes to travel the Continent unchaperoned.</div>
+      <div class="example-q" onclick="useExample(this)">A respectable widow of my parish proposes to live alone, without companion or relation.</div>
+      <div class="example-q" onclick="useExample(this)">A young man's betrothed insists upon retaining her maiden name after the wedding.</div>
 
       <div class="examples-cat-label">Germany &amp; Munich</div>
-      <div class="example-q" onclick="useExample(this)">My cousin returns from Munich speaking of beer-halls where politics is shouted over song. Is the city safe for a lady?</div>
-      <div class="example-q" onclick="useExample(this)">What say you of the German character, now that the Republic totters at Weimar?</div>
-      <div class="example-q" onclick="useExample(this)">A young architect speaks of a school at Dessau called the Bauhaus, where ornament is held a sin. Comment upon this doctrine.</div>
-      <div class="example-q" onclick="useExample(this)">My son proposes to study engineering at Munich rather than Cambridge. Counsel his father.</div>
-      <div class="example-q" onclick="useExample(this)">The German mark was lately worth nothing at all. Shall such a calamity visit the pound?</div>
+      <div class="example-q" onclick="useExample(this)">My cousin returns from Munich speaking of beer-halls where politics is shouted over song.</div>
+      <div class="example-q" onclick="useExample(this)">Comment upon the German character, now that the Republic totters at Weimar.</div>
+      <div class="example-q" onclick="useExample(this)">A young architect speaks of a school at Dessau called the Bauhaus, where ornament is held a sin.</div>
+      <div class="example-q" onclick="useExample(this)">My son proposes to study engineering at Munich rather than Cambridge.</div>
+      <div class="example-q" onclick="useExample(this)">The German mark was lately worth nothing at all.</div>
 
       <div class="examples-cat-label">Design &amp; The Modern Style</div>
-      <div class="example-q" onclick="useExample(this)">A young architect insists a house is "a machine for living in." Is the man a Bolshevik?</div>
-      <div class="example-q" onclick="useExample(this)">My wife proposes to furnish the drawing-room in the modern style — chairs of steel tubing, walls bare of pattern. Reassure me.</div>
+      <div class="example-q" onclick="useExample(this)">A young architect insists a house is "a machine for living in."</div>
+      <div class="example-q" onclick="useExample(this)">My wife proposes to furnish the drawing-room in the modern style — chairs of steel tubing, walls bare of pattern.</div>
       <div class="example-q" onclick="useExample(this)">Comment upon the fashion for buildings without ornament, as if the mason had forgotten his trade.</div>
-      <div class="example-q" onclick="useExample(this)">The new motor-cars grow sleeker each season, as though shaped by the wind itself. Is this progress or vanity?</div>
-      <div class="example-q" onclick="useExample(this)">A designer in Vienna declares ornament to be crime. Is he sound of mind?</div>
+      <div class="example-q" onclick="useExample(this)">The new motor-cars grow sleeker each season, as though shaped by the wind itself.</div>
+      <div class="example-q" onclick="useExample(this)">A designer in Vienna declares ornament to be crime.</div>
 
       <div class="examples-cat-label">The Computing Machine</div>
-      <div class="example-q" onclick="useExample(this)">A man at the Patent Office speaks of a "computing machine" that performs the labour of a hundred clerks in seconds. Shall the counting-house survive the decade?</div>
-      <div class="example-q" onclick="useExample(this)">My nephew claims a machine shall one day play chess against a grandmaster, and win. Diagnose him.</div>
-      <div class="example-q" onclick="useExample(this)">Is it true the Americans build calculating engines that fill an entire room?</div>
-      <div class="example-q" onclick="useExample(this)">A young woman of my acquaintance proposes to learn the operation of these new computing machines. Is the work seemly for her sex?</div>
-      <div class="example-q" onclick="useExample(this)">A correspondent insists that within fifty years, every household shall possess its own computing engine. Comment upon his prospects.</div>
+      <div class="example-q" onclick="useExample(this)">A man at the Patent Office speaks of a "computing machine" that performs the labour of a hundred clerks in seconds.</div>
+      <div class="example-q" onclick="useExample(this)">My nephew claims a machine shall one day play chess against a grandmaster, and win.</div>
+      <div class="example-q" onclick="useExample(this)">The Americans, it is reported, build calculating engines that fill an entire room.</div>
+      <div class="example-q" onclick="useExample(this)">A young woman of my acquaintance proposes to learn the operation of these new computing machines.</div>
+      <div class="example-q" onclick="useExample(this)">A correspondent insists that within fifty years, every household shall possess its own computing engine.</div>
     </div>
   </div>
 </div>
 
 <div class="divider"></div>
-
 <div class="input-area">
   <div class="input-label">You</div>
   <textarea
@@ -793,6 +878,7 @@ textarea::placeholder {
     </div>
   </div>
 </div>
+</div>
 
 
 <script>
@@ -803,9 +889,22 @@ const liveInd    = document.getElementById('liveIndicator');
 
 let streaming = false;
 
+function scrollIfBottom() {
+  const threshold = 80;
+  const atBottom = conv.scrollHeight - conv.scrollTop - conv.clientHeight < threshold;
+  if (atBottom) conv.scrollTop = conv.scrollHeight;
+}
+
+
 function toggleNight() {
   document.documentElement.classList.toggle('night');
   document.body.classList.toggle('night');
+}
+
+function toggleAbout() {
+  const hr = document.querySelector('.header-right');
+  hr.classList.toggle('open');
+  document.querySelector('.about-arrow').textContent = hr.classList.contains('open') ? '▴' : '▾';
 }
 
 let _closeTimer = null;
@@ -855,7 +954,25 @@ function addExchange(role, text) {
 
   const lbl = document.createElement('div');
   lbl.className = role === 'user' ? 'label' : 'label model-label';
-  lbl.textContent = role === 'user' ? 'You' : '1931';
+  if (role === 'user') {
+    lbl.textContent = 'You';
+  } else {
+    lbl.innerHTML = `<svg width="28" height="28" viewBox="-70 -70 140 140" xmlns="http://www.w3.org/2000/svg" style="display:block;opacity:0.6">
+      <g><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="20s" repeatCount="indefinite"/>
+        <circle r="60" fill="none" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+        <circle cx="0" cy="-60" r="3" fill="currentColor"/>
+      </g>
+      <g><animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="10s" repeatCount="indefinite"/>
+        <circle r="42" fill="none" stroke="currentColor" stroke-width="1" opacity="0.7"/>
+        <circle cx="0" cy="-42" r="3" fill="currentColor"/>
+      </g>
+      <g><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="5s" repeatCount="indefinite"/>
+        <circle r="24" fill="none" stroke="currentColor" stroke-width="1"/>
+        <circle cx="0" cy="-24" r="3" fill="currentColor"/>
+      </g>
+      <circle r="3" fill="currentColor"/>
+    </svg>`;
+  }
 
   const cnt = document.createElement('div');
   cnt.className = role === 'user' ? 'content user-content' : 'content';
@@ -864,7 +981,7 @@ function addExchange(role, text) {
   ex.appendChild(lbl);
   ex.appendChild(cnt);
   conv.appendChild(ex);
-  conv.scrollTop = conv.scrollHeight;
+  scrollIfBottom();
   return cnt;
 }
 
@@ -874,7 +991,7 @@ function done(modelContent, cursor) {
   sendBtn.disabled = false;
   liveInd.textContent = '+ Generating';
   liveInd.classList.remove('on');
-  conv.scrollTop = conv.scrollHeight;
+  scrollIfBottom();
 }
 
 async function send() {
@@ -889,6 +1006,8 @@ async function send() {
 
   const hint = document.getElementById('emptyHint');
   if (hint) hint.remove();
+  const ls = document.getElementById('loadingState');
+  if (ls) ls.remove();
   addExchange('user', text);
   const modelContent = addExchange('model', '');
 
@@ -940,7 +1059,7 @@ async function send() {
             buf += d.t;
             modelContent.textContent = buf;
             modelContent.appendChild(cursor);
-            conv.scrollTop = conv.scrollHeight;
+            scrollIfBottom();
           }
           if (d.error) {
             modelContent.textContent = '[ ' + d.error + ' ]';
