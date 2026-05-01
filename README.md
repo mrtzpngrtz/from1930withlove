@@ -1,3 +1,12 @@
+---
+title: From 1930, with Love
+emoji: 📻
+colorFrom: gray
+colorTo: black
+sdk: docker
+pinned: false
+---
+
 # From 1930, with Love
 
 A chat interface for [Talkie 1930-13B-IT](https://huggingface.co/talkie-lm) — a language model trained exclusively on pre-1931 text. Knowledge cutoff: 1930.
