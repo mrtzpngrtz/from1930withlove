@@ -2,7 +2,7 @@
 title: From 1930, with Love
 emoji: 📻
 colorFrom: gray
-colorTo: black
+colorTo: gray
 sdk: docker
 pinned: false
 ---
