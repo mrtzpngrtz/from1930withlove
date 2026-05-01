@@ -516,7 +516,7 @@ textarea::placeholder {
 .examples-inner {
   display: grid;
   grid-template-columns: 1fr;
-  padding: 12px var(--gutter) 16px;
+  padding: 12px 0 16px;
 }
 
 .examples-header {
@@ -882,6 +882,7 @@ textarea::placeholder {
 
 
 <script>
+const API_BASE   = new URLSearchParams(location.search).get('api') || '';
 const conv       = document.getElementById('conversation');
 const inputEl    = document.getElementById('input');
 const sendBtn    = document.getElementById('sendBtn');
@@ -911,7 +912,17 @@ let _closeTimer = null;
 
 function openExamples() {
   clearTimeout(_closeTimer);
-  document.getElementById('examplesOverlay').classList.add('open');
+  const panel = document.getElementById('examplesOverlay');
+  if (window.innerWidth > 768) {
+    const bw = panel.parentElement.getBoundingClientRect();
+    const tr = document.getElementById('input').getBoundingClientRect();
+    panel.style.left  = (tr.left  - bw.left)  + 'px';
+    panel.style.right = (bw.right - tr.right)  + 'px';
+  } else {
+    panel.style.left = '';
+    panel.style.right = '';
+  }
+  panel.classList.add('open');
 }
 
 function closeExamples() {
@@ -1023,7 +1034,7 @@ async function send() {
 
   let buf = '';
   try {
-    const res = await fetch('/stream?' + params);
+    const res = await fetch(API_BASE + '/stream?' + params);
     if (!res.ok) throw new Error('HTTP ' + res.status);
 
     const reader = res.body.getReader();

@@ -13,6 +13,8 @@ from talkie.model import GPTConfig, TalkieModel, resize_model_embeddings
 
 
 def _trim_ram() -> None:
+    if sys.platform != "win32":
+        return
     import ctypes
     try:
         ctypes.windll.psapi.EmptyWorkingSet(
@@ -133,9 +135,11 @@ _talkie_model.load_checkpoint = _load_checkpoint_4bit
 from talkie.generate import Talkie  # noqa: E402
 
 import asyncio
+import os
 import threading
 from fastapi import FastAPI, Query, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 MAX_PROMPT_CHARS = 1500
@@ -144,6 +148,16 @@ MIN_TEMPERATURE  = 0.05
 MAX_TEMPERATURE  = 2.0
 
 app = FastAPI()
+
+_allowed_origins = [o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "").split(",") if o.strip()]
+if _allowed_origins:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=_allowed_origins,
+        allow_methods=["GET"],
+        allow_headers=["*"],
+    )
+
 _talkie: Talkie | None = None
 
 # --- queue state (mutated only under _q_lock) ---
@@ -268,4 +282,6 @@ async def stream(
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+    import os
+    port = int(os.environ.get("PORT", 7860))
+    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
